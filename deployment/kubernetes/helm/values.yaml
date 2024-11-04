@@ -1,0 +1,136 @@
+# Global values applied across all templates
+global:
+  imagePullSecrets: []
+  storageClass: "fast"
+
+# Image Configuration
+image:
+  repository: website.com/search-engine
+  tag: "v1.0.0"
+  pullPolicy: IfNotPresent
+
+# Resource limits for containers
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+
+# Web UI service configuration
+webUI:
+  enabled: true
+  replicas: 3
+  service:
+    type: ClusterIP
+    port: 8080
+  ingress:
+    enabled: true
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    hosts:
+      - host: ui.website.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: ui-tls
+        hosts:
+          - ui.website.com
+
+# Crawler service configuration
+crawler:
+  enabled: true
+  replicas: 5
+  service:
+    type: ClusterIP
+    port: 5000
+  ingress:
+    enabled: false
+
+# Indexing service configuration
+indexing:
+  enabled: true
+  replicas: 2
+  service:
+    type: ClusterIP
+    port: 5001
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "fast"
+
+# Query Processor service configuration
+queryProcessor:
+  enabled: true
+  replicas: 3
+  service:
+    type: ClusterIP
+    port: 5002
+
+# Monitoring and logging configuration
+monitoring:
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+    adminPassword: "securepassword"
+  logging:
+    enabled: true
+    logLevel: info
+    persistentLogs:
+      enabled: true
+      size: 5Gi
+      storageClass: "fast"
+
+# Security and privacy configurations
+security:
+  rbac:
+    enabled: true
+  oauth2:
+    enabled: true
+    clientID: "client_id"
+    clientSecret: "client_secret"
+  tls:
+    enabled: true
+    certManager:
+      issuer: "letsencrypt-prod"
+
+# Horizontal pod autoscaler configuration
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# Pod disruption budget (to ensure high availability)
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# Persistent storage for crawled data
+persistence:
+  enabled: true
+  size: 100Gi
+  storageClass: "fast"
+
+# Alerting rules
+alerting:
+  enabled: true
+  alertRules:
+    highLatency:
+      expr: 'rate(http_request_duration_seconds_sum[5m]) > 1'
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        description: "High latency detected"
+
+# Environment-specific configuration
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: SEARCH_ENGINE_MODE
+    value: "full"

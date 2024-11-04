@@ -1,0 +1,169 @@
+/* General Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+/* Reset list styles */
+ol, ul {
+    list-style: none;
+}
+
+/* Reset table styles */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Form elements reset */
+button, input, select, textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: none;
+}
+
+/* Hyperlink reset */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Media elements reset */
+img, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Miscellaneous element resets */
+blockquote, q {
+    quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+
+/* Remove default fieldset padding */
+fieldset {
+    padding: 0;
+}
+
+/* Remove default border for hr */
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+/* Reset iframe and object */
+iframe, object, embed {
+    border: none;
+}
+
+/* Reset typography */
+strong {
+    font-weight: bold;
+}
+
+/* Set default box-sizing */
+* {
+    box-sizing: border-box;
+}
+
+/* Reset to handle vertical rhythm */
+body {
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* Remove all animations */
+* {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Reset default input element styles */
+input[type="search"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: none;
+}
+
+textarea {
+    resize: none;
+}
+
+/* Reset focus outline */
+:focus {
+    outline: none;
+}
+
+/* Blockquote default reset */
+blockquote {
+    padding-left: 1em;
+    border-left: 5px solid #ccc;
+}
+
+/* Reset default button styles */
+button {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+/* Remove gap in mobile views for hidden elements */
+.hidden {
+    display: none !important;
+}
+
+/* Handling form placeholder reset */
+::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+/* Force table elements to behave more predictably */
+table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+/* Reset iframe */
+iframe {
+    width: 100%;
+    height: auto;
+    display: block;
+}

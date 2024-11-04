@@ -1,0 +1,151 @@
+# Production Configuration for Search Engine
+
+# General settings
+app:
+  name: SearchEngine
+  environment: production
+  version: 1.0.0
+
+# Logging Configuration
+logging:
+  level: INFO
+  format: json
+  output: file
+  file_path: /var/log/search_engine/production.log
+  max_size: 100MB
+  max_backups: 10
+  compress: true
+
+# Database settings
+database:
+  type: postgresql
+  host: prod-db.website.com
+  port: 5432
+  user: prod_user
+  password: prod_password
+  database: search_engine_prod
+  pool_size: 50
+  timeout: 30s
+  ssl_mode: require
+
+# Crawler configuration
+crawler:
+  max_threads: 100
+  politeness_delay: 2s
+  max_depth: 10
+  user_agent: SearchEngineBot/1.0
+  url_queue:
+    type: redis
+    host: prod-redis.website.com
+    port: 6379
+    db: 0
+  content_extraction:
+    timeout: 10s
+    max_content_length: 5MB
+
+# Indexing Configuration
+indexing:
+  inverted_index:
+    storage_path: /data/indexes/inverted_index
+    compression: true
+    max_index_size: 100GB
+  term_frequency:
+    threshold: 5
+  document_frequency:
+    update_interval: 24h
+
+# Query Processor Configuration
+query_processor:
+  language_support: [ "en", "es", "fr", "de" ]
+  query_expansion:
+    enabled: true
+    synonyms_source: /data/synonyms/synonyms.csv
+  fuzzy_search:
+    enabled: true
+    max_edit_distance: 2
+  stop_words:
+    source: /data/stop_words.txt
+
+# Ranking Configuration
+ranking:
+  algorithm: bm25
+  bm25_params:
+    k1: 1.5
+    b: 0.75
+  relevance_feedback:
+    enabled: true
+  personalization:
+    enabled: false
+
+# Search API Configuration
+api:
+  host: 0.0.0.0
+  port: 8080
+  enable_swagger: true
+  rate_limiting:
+    requests_per_minute: 1000
+    burst_limit: 200
+
+# Security Configuration
+security:
+  enable_https: true
+  ssl_certificate_path: /ssl/certs/website.crt
+  ssl_key_path: /ssl/private/website.key
+  oauth2:
+    enabled: true
+    client_id: prod_oauth_client_id
+    client_secret: prod_oauth_client_secret
+  api_key_auth:
+    enabled: true
+    keys:
+      - prod_api_key_1
+      - prod_api_key_2
+  encryption:
+    at_rest: true
+    in_transit: true
+
+# Monitoring and Metrics
+monitoring:
+  prometheus_exporter:
+    enabled: true
+    endpoint: /metrics
+  alerting:
+    enabled: true
+    alert_rules: /prometheus/alert_rules.yaml
+  grafana:
+    dashboards_path: /grafana/dashboards/
+
+# Distributed System Configuration
+distributed_system:
+  indexing:
+    partitioning:
+      strategy: hash
+      partitions: 10
+  crawling:
+    coordinator:
+      host: coordinator.prod.website.com
+      port: 9090
+  load_balancing:
+    enabled: true
+    method: round_robin
+  fault_tolerance:
+    replication: true
+    failover_enabled: true
+
+# Backup and Restore
+backup:
+  enabled: true
+  schedule: daily
+  storage_path: /backups/
+  retention_days: 30
+  backup_type: full
+
+# Alerts and Notifications
+notifications:
+  slack_webhook_url: https://hooks.slack.com/services/production/slack/webhook
+  email:
+    smtp_server: smtp.prod.website.com
+    port: 587
+    from: alerts@website.com
+    to: [ "admin@website.com" ]
+    subject_prefix: "[Production Alert]"

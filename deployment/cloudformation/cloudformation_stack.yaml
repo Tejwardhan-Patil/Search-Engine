@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation Stack for Search Engine Deployment
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3.medium
+    Description: EC2 instance type for the search engine.
+  
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instances.
+
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: ami-0abcdef1234567890 
+      SecurityGroups:
+        - !Ref WebServerSecurityGroup
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          apt-get update
+          apt-get install -y python3 python3-pip
+          pip3 install flask
+          # Clone repository and start the search engine web interface
+          git clone https://github.com/repository/search-engine.git /opt/search-engine
+          cd /opt/search-engine/search_interface
+          python3 app.py
+
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access and SSH access on the web server.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  SearchEngineS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: search-engine-crawl-data
+      VersioningConfiguration:
+        Status: Enabled
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      AvailabilityZones:
+        Fn::GetAZs: ""
+      Listeners:
+        - LoadBalancerPort: '80'
+          InstancePort: '80'
+          Protocol: HTTP
+      HealthCheck:
+        Target: HTTP:80/
+        HealthyThreshold: '3'
+        UnhealthyThreshold: '5'
+        Interval: '30'
+        Timeout: '5'
+      Instances:
+        - !Ref WebServerInstance
+
+  CrawlDataDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SearchEngineCrawlData
+      AttributeDefinitions:
+        - AttributeName: URL
+          AttributeType: S
+      KeySchema:
+        - AttributeName: URL
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+Outputs:
+  WebServerURL:
+    Description: URL of the Load Balancer
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt LoadBalancer.DNSName
+
+  S3BucketName:
+    Description: Name of the S3 bucket for storing crawled data
+    Value: !Ref SearchEngineS3Bucket
+
+  DynamoDBTableName:
+    Description: Name of the DynamoDB table storing crawl data
+    Value: !Ref CrawlDataDynamoDBTable

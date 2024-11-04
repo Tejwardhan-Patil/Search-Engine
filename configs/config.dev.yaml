@@ -1,0 +1,65 @@
+# Development Environment Configuration
+
+server:
+  host: 0.0.0.0
+  port: 8080
+  debug: true 
+
+database:
+  host: localhost
+  port: 5432
+  user: dev_user
+  password: dev_password
+  name: search_engine_dev
+  pool_size: 10  
+
+logging:
+  level: DEBUG  
+  file: logs/development.log  
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+crawler:
+  user_agent: 'SearchEngineBot/1.0'
+  max_depth: 5  
+  politeness_delay: 2 
+  timeout: 10  
+
+indexing:
+  shard_count: 3  
+  compression_enabled: true 
+  compression_type: 'delta'
+
+query_processing:
+  spell_correction_enabled: true
+  synonym_expansion_enabled: true
+
+ranking:
+  model: 'BM25'
+  page_rank_weight: 0.2  
+
+security:
+  api_key_required: true  
+  encryption_enabled: true  
+  oauth_provider: 'oauth_dev_provider'
+
+monitoring:
+  enabled: true 
+  prometheus_port: 9090 
+
+storage:
+  type: 'local'
+  document_store_path: '/data/documents'
+  metadata_store_path: '/data/metadata'
+
+alerting:
+  enabled: true
+  alert_rules_file: configs/alert_rules.yaml
+
+deployment:
+  strategy: 'RollingUpdate' 
+  replicas: 2  
+
+features:
+  enable_distributed_crawling: false 
+  enable_fault_tolerance: false  
+  enable_relevance_feedback: true  

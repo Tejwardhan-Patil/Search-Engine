@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  web_crawler:
+    image: web_crawler_image
+    container_name: web_crawler
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    volumes:
+      - ./crawler/:/app/crawler/
+    environment:
+      - CRAWL_POLICY=politeness_policy
+      - RATE_LIMITER=rate_limiting_policy
+    command: python3 crawler_manager.py
+
+  indexing:
+    image: indexing_image
+    container_name: indexing_service
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    volumes:
+      - ./indexing/:/app/indexing/
+    command: java -jar inverted_index_builder.java
+
+  query_processor:
+    image: query_processor_image
+    container_name: query_processor
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    volumes:
+      - ./query_processor/:/app/query_processor/
+    environment:
+      - QUERY_TYPE=boolean_query
+    command: java -jar query_parser.java
+
+  ranking:
+    image: ranking_image
+    container_name: ranking_service
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    volumes:
+      - ./ranking/:/app/ranking/
+    command: java -jar ranking_model.java
+
+  search_interface:
+    image: search_interface_image
+    container_name: search_interface
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./search_interface/:/app/search_interface/
+    environment:
+      - FLASK_ENV=production
+    command: python3 app.py
+
+  storage:
+    image: storage_service_image
+    container_name: storage_service
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    volumes:
+      - ./storage/:/app/storage/
+    command: java -jar document_store.java
+
+  monitoring:
+    image: monitoring_service_image
+    container_name: monitoring_service
+    build:
+      context: ./deployment/docker
+      dockerfile: Dockerfile
+    networks:
+      - search_engine_network
+    volumes:
+      - ./monitoring/:/app/monitoring/
+    command: python3 prometheus_exporter.go
+
+networks:
+  search_engine_network:
+    driver: bridge

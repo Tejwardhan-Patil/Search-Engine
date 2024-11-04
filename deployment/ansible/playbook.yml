@@ -1,0 +1,70 @@
+---
+- name: Deploy Search Engine Components
+  hosts: all
+  become: true
+  tasks:
+    - name: Update all packages to the latest version
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install required dependencies
+      apt:
+        name: 
+          - python3-pip
+          - openjdk-11-jdk
+          - golang
+        state: present
+
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Ensure Docker service is enabled and running
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Ensure Docker Compose is installed
+      pip:
+        name: docker-compose
+
+    - name: Copy Crawler Python files to the server
+      copy:
+        src: /crawler/
+        dest: /opt/search_engine/crawler/
+
+    - name: Copy Indexing Java files to the server
+      copy:
+        src: /indexing/
+        dest: /opt/search_engine/indexing/
+
+    - name: Copy Query Processor files to the server
+      copy:
+        src: /query_processor/
+        dest: /opt/search_engine/query_processor/
+
+    - name: Copy Ranking Java files to the server
+      copy:
+        src: /ranking/
+        dest: /opt/search_engine/ranking/
+
+    - name: Deploy the web UI using Docker Compose
+      copy:
+        src: /docker-compose.yml
+        dest: /opt/search_engine/docker-compose.yml
+
+    - name: Start the search engine services
+      shell: docker-compose up -d
+      args:
+        chdir: /opt/search_engine/
+
+    - name: Ensure all services are running
+      shell: docker ps
+      register: result
+
+    - name: Output Docker running services
+      debug:
+        var: result.stdout

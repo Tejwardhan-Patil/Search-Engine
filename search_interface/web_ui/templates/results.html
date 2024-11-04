@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url_for('index') }}">SearchEngine</a>
+            </div>
+            <div class="search-bar">
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="text" name="query" value="{{ request.args.get('query', '') }}" placeholder="Search...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="results-section">
+            <h1>Search Results for: "{{ request.args.get('query', '') }}"</h1>
+            {% if results %}
+            <div class="results-info">
+                <p>Found {{ results.total }} results in {{ time_taken }} seconds</p>
+            </div>
+            <div class="results-filters">
+                <p>Filter by:</p>
+                <form action="{{ url_for('search') }}" method="GET">
+                    <input type="hidden" name="query" value="{{ request.args.get('query', '') }}">
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="relevance" {% if request.args.get('sort') == 'relevance' %} selected {% endif %}>Relevance</option>
+                        <option value="date" {% if request.args.get('sort') == 'date' %} selected {% endif %}>Date</option>
+                    </select>
+                    <select name="type" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <option value="articles" {% if request.args.get('type') == 'articles' %} selected {% endif %}>Articles</option>
+                        <option value="blogs" {% if request.args.get('type') == 'blogs' %} selected {% endif %}>Blogs</option>
+                        <option value="videos" {% if request.args.get('type') == 'videos' %} selected {% endif %}>Videos</option>
+                    </select>
+                </form>
+            </div>
+            <div class="results-list">
+                <ul>
+                    {% for result in results.items %}
+                    <li class="result-item">
+                        <h2><a href="{{ result.url }}">{{ result.title }}</a></h2>
+                        <p>{{ result.snippet }}</p>
+                        <p><small>Published on: {{ result.date }} | Type: {{ result.type }}</small></p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="pagination">
+                {% if results.has_prev %}
+                <a href="{{ url_for('search', query=request.args.get('query'), page=results.prev_num, sort=request.args.get('sort'), type=request.args.get('type')) }}">&laquo; Previous</a>
+                {% endif %}
+                {% for page_num in results.iter_pages() %}
+                {% if page_num %}
+                {% if page_num == results.page %}
+                <span class="current-page">{{ page_num }}</span>
+                {% else %}
+                <a href="{{ url_for('search', query=request.args.get('query'), page=page_num, sort=request.args.get('sort'), type=request.args.get('type')) }}">{{ page_num }}</a>
+                {% endif %}
+                {% else %}
+                <span class="ellipsis">...</span>
+                {% endif %}
+                {% endfor %}
+                {% if results.has_next %}
+                <a href="{{ url_for('search', query=request.args.get('query'), page=results.next_num, sort=request.args.get('sort'), type=request.args.get('type')) }}">Next &raquo;</a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="no-results">
+                <p>No results found for "{{ request.args.get('query', '') }}". Please try a different search term.</p>
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 SearchEngine - All Rights Reserved.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+
+</html>

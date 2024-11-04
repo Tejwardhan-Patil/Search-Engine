@@ -1,0 +1,79 @@
+groups:
+  - name: general.rules
+    rules:
+      # Alert for high CPU usage across nodes
+      - alert: HighCpuUsage
+        expr: avg by(instance) (rate(node_cpu_seconds_total{mode!="idle"}[1m])) > 0.85
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} CPU usage is too high"
+          description: "CPU usage for {{ $labels.instance }} has exceeded 85% for more than 5 minutes."
+          runbook: "https://website.com/runbook/high-cpu-usage"
+
+      # Alert for low memory available
+      - alert: LowMemory
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Instance {{ $labels.instance }} memory is low"
+          description: "Memory availability for {{ $labels.instance }} is below 10% for more than 5 minutes."
+          runbook: "https://website.com/runbook/low-memory"
+
+      # Alert for high disk usage
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_avail_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} > 0.85
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Instance {{ $labels.instance }} disk usage is high"
+          description: "Disk usage for {{ $labels.instance }} has exceeded 85% for more than 10 minutes."
+          runbook: "https://website.com/runbook/high-disk-usage"
+
+      # Alert for HTTP request latency
+      - alert: HighHttpLatency
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 0.5
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High HTTP latency detected"
+          description: "95th percentile HTTP request latency is above 0.5 seconds for the past 5 minutes."
+          runbook: "https://website.com/runbook/high-http-latency"
+
+      # Alert for instance down
+      - alert: InstanceDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.instance }} is down"
+          description: "{{ $labels.instance }} has been down for more than 5 minutes."
+          runbook: "https://website.com/runbook/instance-down"
+          
+      # Alert for high error rates on API responses
+      - alert: HighErrorRate
+        expr: increase(http_requests_total{status_code=~"5.."}[5m]) / increase(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error rate detected"
+          description: "The error rate for HTTP requests is greater than 5% over the last 5 minutes."
+          runbook: "https://website.com/runbook/high-error-rate"
+
+      # Alert for node failure in distributed system
+      - alert: NodeFailure
+        expr: node_health{status="unhealthy"} > 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node failure detected"
+          description: "One or more nodes have reported a failure status."
+          runbook: "https://website.com/runbook/node-failure"

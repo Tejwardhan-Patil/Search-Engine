@@ -1,0 +1,244 @@
+/* Resetting some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header styling */
+header {
+    background-color: #4CAF50;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    letter-spacing: 1px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+/* Search bar styling */
+.search-bar {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.search-bar input[type="text"] {
+    width: 80%;
+    max-width: 600px;
+    padding: 12px 20px;
+    font-size: 18px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    transition: border 0.3s ease-in-out;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+.search-bar button {
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.search-bar button:hover {
+    background-color: #45a049;
+}
+
+/* Styling the search results section */
+.search-results {
+    margin-top: 30px;
+}
+
+.search-results h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.result-item {
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.result-item:hover {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.result-title {
+    font-size: 20px;
+    color: #4CAF50;
+    margin-bottom: 10px;
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+.result-title:hover {
+    color: #45a049;
+}
+
+.result-snippet {
+    color: #777;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.result-url {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Pagination styles */
+.pagination {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination a {
+    color: #4CAF50;
+    padding: 8px 16px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.pagination a:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* Active pagination link */
+.pagination .active {
+    background-color: #4CAF50;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+
+/* Error message styles */
+.error-message {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #ffdddd;
+    border: 1px solid #f44336;
+    color: #f44336;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 18px;
+}
+
+/* Footer styles */
+footer {
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+}
+
+footer p {
+    font-size: 14px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    header {
+        font-size: 20px;
+    }
+
+    .search-bar input[type="text"] {
+        width: 100%;
+    }
+
+    .result-item {
+        padding: 15px;
+    }
+
+    .result-title {
+        font-size: 18px;
+    }
+
+    .pagination a {
+        padding: 6px 12px;
+    }
+
+    footer p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-bar button {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+
+    .result-snippet {
+        font-size: 14px;
+    }
+}
+
+/* Additional UI components */
+button.load-more {
+    display: block;
+    margin: 30px auto;
+    padding: 12px 30px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+button.load-more:hover {
+    background-color: #45a049;
+}
+
+.loading-spinner {
+    display: none;
+    margin: 0 auto;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #4CAF50;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
